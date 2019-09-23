@@ -1,12 +1,12 @@
 # PlugNpshell
 
 
-*A Simple Powershell Library for creating [Opsview Opspack plugins](https://github.com/opsview/Opsview-Integrations/blob/master/WHAT_IS_A_MONITORING_PLUGIN.md).*
+*A Simple PowerShell Library for creating [Opsview Opspack plugins](https://github.com/opsview/Opsview-Integrations/blob/master/WHAT_IS_A_MONITORING_PLUGIN.md).*
 
 * **category**    Libraries
 * **copyright**   Copyright (C) 2003 - 2019 Opsview Limited. All rights reserved
 * **license**     Apache License Version 2.0 (see [LICENSE](LICENSE))
-* **link**        https://github.com/opsview/powershell
+* **link**        https://github.com/opsview/plugnpshell
 
 
 ## Installing the Library
