@@ -1,12 +1,12 @@
 # PlugNpshell
 
 
-*A Simple PowerShell Library for creating [Opsview Opspack plugins](https://github.com/opsview/Opsview-Integrations/blob/master/WHAT_IS_A_MONITORING_PLUGIN.md).*
+*A Simple Powershell Library for creating [Opsview Opspack plugins](https://github.com/opsview/Opsview-Integrations/blob/master/WHAT_IS_A_MONITORING_PLUGIN.md).*
 
 * **category**    Libraries
 * **copyright**   Copyright (C) 2003 - 2019 Opsview Limited. All rights reserved
 * **license**     Apache License Version 2.0 (see [LICENSE](LICENSE))
-* **link**        https://github.com/opsview/plugnpshell
+* **link**        https://github.com/opsview/powershell
 
 
 ## Installing the Library
@@ -269,6 +269,19 @@ This would produce the following output:
 
 `METRIC WARNING - Disk Usage is 30.56% + CPU Usage is 70.75% | 'Disk Usage'=30.56%;70;90 'CPU Usage'=70.75%;70;90`
 
+## Helper methods
+
+The **Metric** class includes a helper method to make developing service checks easier.
+
+The **ConvertValue()** method converts a given value and unit to a more human friendly value and unit.
+
+```Powershell
+$value = 2400; $unit = 'B'; $decimalPrecision = 2; $siBytesConversion = $false
+$converted = [Metric]::ConvertValue($value, $unit, $decimalPrecision, $siBytesConversion)
+```
+
+The above example will return a hashtable, where **$converted.Value** will be `2.34` and **$converted.UOM** will be `'KB'`.
+Both methods support the **SiBytesConversion** field. See [**Checks with automatic conversions**](#checks-with-automatic-conversions) above for more details.
 
 ## Using the Exceptions
 

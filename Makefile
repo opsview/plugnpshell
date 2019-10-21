@@ -45,7 +45,7 @@ all: help
 
 .PHONY: test-plugins
 test-plugins:
-	-${POWERSHELL_BIN} -Command Install-Module Pester -Force
+	-${POWERSHELL_BIN} -Command Import-Module Pester -Force
 	@for f in ${SCRIPTS_DIR}/*.ps1; do \
 	    ${POWERSHELL_BIN} -Command Invoke-Pester $(TEST_DIR)/TestPlugNpshell.Tests.ps1 -CodeCoverage "$${f}"; done
 
@@ -54,7 +54,7 @@ test: test-plugins
 
 .PHONY: script-analyzer-plugins
 script-analyzer-plugins:
-	-${POWERSHELL_BIN} -Command Install-Module PSScriptAnalyzer -Force
+	-${POWERSHELL_BIN} -Command Import-Module PSScriptAnalyzer -Force
 	@for f in ${SCRIPTS_DIR}/*.ps1; do \
 	    ${POWERSHELL_BIN} -Command Invoke-ScriptAnalyzer "$${f}"; done
 

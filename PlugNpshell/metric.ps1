@@ -9,7 +9,6 @@ class Metric {
     [string] $Name
     [double] $Value = [long]::MinValue
     [string] $UOM = ''
-    [string] $UOMprefix = ''
     [string] $WarningThreshold = $null
     [string] $CriticalThreshold = $null
     [boolean] $SiBytesConversion = $false
@@ -23,14 +22,37 @@ class Metric {
     [string] $PerfOutput = ''
     [string] $DisplayName = ''
     [string] $DisplayFormat = "{name} is {value}{unit}"
-    [System.Object[]] $ByteConversionValuesP
-    [System.Object[]] $DecConversionValuesP
-    [System.Object[]] $DecConversionValuesN
-    [System.Collections.ArrayList] $ByteUnits = @('b', 'B', 'bps', 'Bps')
-    [System.Collections.ArrayList] $ConvertableUnitsN = @('s', 'Hz', 'W')
-    [System.Collections.ArrayList] $ConvertableUnitsP = @('Hz', 'W')
-    [System.Collections.ArrayList] $ConvertableUnits
+
+    [System.Collections.ArrayList] static $ByteUnits = @('b', 'B', 'bps', 'Bps')
+    [System.Collections.ArrayList] static $ConvertableUnitsN = @('s', 'Hz', 'W')
+    [System.Collections.ArrayList] static $ConvertableUnitsPositive = @('Hz', 'W')
+    [System.Collections.ArrayList] static $ConvertableUnitsP = [metric]::ConvertableUnitsPositive + [metric]::ByteUnits
+    [System.Collections.ArrayList] static $ConvertableUnits = [metric]::ConvertableUnitsN + [metric]::ConvertableUnitsP
     [int] $PRECISION = 2
+
+    [UnitCollection] static $EiB = [UnitCollection]::New("ExbiByte", "E", [Math]::Pow(1024, 6))
+    [UnitCollection] static $PiB = [UnitCollection]::New("PebiByte", "P", [Math]::Pow(1024, 5))
+    [UnitCollection] static $TiB = [UnitCollection]::New("TebiByte", "T", [Math]::Pow(1024, 4))
+    [UnitCollection] static $GiB = [UnitCollection]::New("GibiByte", "G", [Math]::Pow(1024, 3))
+    [UnitCollection] static $MiB = [UnitCollection]::New("MebiByte", "M", [Math]::Pow(1024, 2))
+    [UnitCollection] static $KiB = [UnitCollection]::New("KibiByte", "K", 1024)
+    [System.Object[]] static $ByteConversionValuesP = @([metric]::EiB, [metric]::PiB, [metric]::TiB, [metric]::GiB, `
+                                                        [metric]::MiB, [metric]::KiB)
+
+    [UnitCollection] static $EB = [UnitCollection]::New("ExaByte", "E", 1e18)
+    [UnitCollection] static $PB = [UnitCollection]::New("PetaByte", "P", 1e15)
+    [UnitCollection] static $TB = [UnitCollection]::New("TeraByte", "T", 1e12)
+    [UnitCollection] static $GB = [UnitCollection]::New("GigaByte", "G", 1e9)
+    [UnitCollection] static $MB = [UnitCollection]::New("MegaByte", "M", 1e6)
+    [UnitCollection] static $KB = [UnitCollection]::New("KiloByte", "K", 1000)
+    [System.Object[]] static $DecConversionValuesP = @([metric]::EB, [metric]::PB, [metric]::TB, [metric]::GB, `
+                                                       [metric]::MB, [metric]::KB)
+
+    [UnitCollection] static $Pico = [UnitCollection]::New("Pico", "p", [Math]::Pow(0.001, 4))
+    [UnitCollection] static $Nano = [UnitCollection]::New("Nano", "n", [Math]::Pow(0.001, 3))
+    [UnitCollection] static $Micro = [UnitCollection]::New("Micro", "u", [Math]::Pow(0.001, 2))
+    [UnitCollection] static $Milli = [UnitCollection]::New("Milli", "m", [Math]::Pow(0.001, 1))
+    [System.Object[]] static $DecConversionValuesN = @([metric]::Milli, [metric]::Micro, [metric]::Nano, [metric]::Pico)
 
     <#
     .DESCRIPTION
@@ -58,23 +80,20 @@ class Metric {
                 $this."$key" = $_.Value
             }
             catch {
-                throw [ParamError] "Invalid Parameter '$key'. Check the correct naming of the argument."
+                throw [ParamError]::new("Invalid Parameter '$key'. Check the correct naming of the argument.")
             }
         }
         if ($this.Name -And $this.Value -ne [long]::MinValue) {
             $this.Init()
         }
         else {
-            throw [ParamError] "Insufficient parameters. You must specify the Name and the Value of the metric."
+            throw [ParamError]::new("Insufficient parameters. You must specify the Name and the Value of the metric.")
         }
     }
 
     [void] Init() {
         $this.DisplayName = $( if ($this.DisplayName) { $this.DisplayName } else { $this.Name } )
-        $this.ConvertableUnitsP += $this.ByteUnits
-        $this.ConvertableUnits = $this.ConvertableUnitsN + $this.ConvertableUnitsP
         $this.ValidateName()
-        $this.CreateConversionTables()
         if ($this.DisplayInSummary) {
             $this.CreateMetricSummary()
         }
@@ -85,60 +104,39 @@ class Metric {
 
     }
 
-    [void] CreateConversionTables() {
-        $EiB = [UnitCollection]::New("ExbiByte", "E", [Math]::Pow(1024, 6))
-        $PiB = [UnitCollection]::New("PebiByte", "P", [Math]::Pow(1024, 5))
-        $TiB = [UnitCollection]::New("TebiByte", "T", [Math]::Pow(1024, 4))
-        $GiB = [UnitCollection]::New("GibiByte", "G", [Math]::Pow(1024, 3))
-        $MiB = [UnitCollection]::New("MebiByte", "M", [Math]::Pow(1024, 2))
-        $KiB = [UnitCollection]::New("KibiByte", "K", 1024)
-        $this.ByteConversionValuesP = @($EiB, $PiB, $TiB, $GiB, $MiB, $KiB)
-
-        $EB = [UnitCollection]::New("ExaByte", "E", 1e18)
-        $PB = [UnitCollection]::New("PetaByte", "P", 1e15)
-        $TB = [UnitCollection]::New("TeraByte", "T", 1e12)
-        $GB = [UnitCollection]::New("GigaByte", "G", 1e9)
-        $MB = [UnitCollection]::New("MegaByte", "M", 1e6)
-        $KB = [UnitCollection]::New("KiloByte", "K", 1000)
-        $this.DecConversionValuesP = @($EB, $PB, $TB, $GB, $MB, $KB)
-
-        $Pico = [UnitCollection]::New("Pico", "p", [Math]::Pow(0.001, 4))
-        $Nano = [UnitCollection]::New("Nano", "n", [Math]::Pow(0.001, 3))
-        $Micro = [UnitCollection]::New("Micro", "u", [Math]::Pow(0.001, 2))
-        $Milli = [UnitCollection]::New("Milli", "m", [Math]::Pow(0.001, 1))
-        $this.DecConversionValuesN = @($Milli, $Micro, $Nano, $Pico)
-    }
-
-    [UnitCollection[]] GetConvertableUnitsArr($Val, $Unit) {
+    [UnitCollection[]] static GetConvertableUnitsArr($Val, $Unit, $SiConversion) {
         # Returns the correct array to convert the value
         $ConversionArr = @()
-        if ($Val -ge 1 -And $this.ConvertableUnitsP.Contains($Unit)) {
-            if ($this.ByteUnits.Contains($Unit) -And -not($this.SiBytesConversion)) {
-                $ConversionArr = $this.ByteConversionValuesP
+        if ($Val -ge 1 -And [Metric]::ConvertableUnitsP.Contains($Unit)) {
+            if ([Metric]::ByteUnits.Contains($Unit) -And -Not($SiConversion)) {
+                $ConversionArr = [Metric]::ByteConversionValuesP
             }
             else {
-                $ConversionArr = $this.DecConversionValuesP
+                $ConversionArr = [Metric]::DecConversionValuesP
             }
         }
-        elseif ($Val -lt 1 -And $this.ConvertableUnitsN.Contains($Unit)) {
-            $ConversionArr = $this.DecConversionValuesN
+        elseif ($Val -lt 1 -And [Metric]::ConvertableUnitsN.Contains($Unit)) {
+            $ConversionArr = [Metric]::DecConversionValuesN
         }
         return $ConversionArr
     }
 
 
-    [double] ConvertValue($OldValue, $ConversionTable, $Precision) {
+    [HashTable] static ConvertValueMethod($OldValue, $Unit, $ConversionTable, $Precision) {
         # Converts values with the right prefix for display.
-        [double] $NewValue = $OldValue
+        $UOMprefix = ''
+        [hashtable] $conversion = @{ }
+        [double] $newValue = $OldValue
         for ($i = 0; $i -lt $ConversionTable.Count; $i++) {
             if ($OldValue -ge $ConversionTable[$i].GetValue()) {
-                $NewValue = $OldValue / $ConversionTable[$i].GetValue()
-                $this.UOMprefix = $ConversionTable[$i].GetUnitPrefix()
+                $newValue = $OldValue / $ConversionTable[$i].GetValue()
+                $UOMprefix = $ConversionTable[$i].GetUnitPrefix()
                 break
             }
         }
-        $NewValue = [math]::Round($NewValue, $Precision)
-        return $NewValue
+        $conversion.Value = [math]::Round($newValue, $Precision)
+        $conversion.UOM = "$UOMprefix$Unit"
+        return $conversion
     }
 
     [void] ValidateName() {
@@ -167,32 +165,31 @@ class Metric {
         return $ReturnCode
     }
 
-    [double] ConvertThreshold($Threshold) {
+    [double] static ConvertThreshold([string]$Threshold, [string]$Uom, [boolean]$SiConversion) {
         # Convert threshold value.
-        [string] $Threshold
         $ConvertVal = 1
         $Unit = $Threshold -replace ('\d|\.', '')
-        $Val = $Threshold -replace ("([^\d]|\.)+", '')
+        $Val = $Threshold -replace ('([^\d.])+','')
         $ConvertUnit = $Unit.Substring(0, 1)
         $Unit = $Unit.Substring(1)
-        If ($Unit -ne $this.UOM) {
-            throw [InvalidMetricThreshold]
+        If ($Uom -ne $Unit) {
+            throw [InvalidMetricThreshold]::new("Unit '$Uom' doesn't match '$Unit'")
         }
 
         try {
             $NumericValue = [float]::Parse($Val)
         }
         catch {
-            throw [InvalidMetricThreshold]
+            throw [InvalidMetricThreshold]::new("'$Val' is not a numeric value")
         }
-        $ConversionArr = $this.GetConvertableUnitsArr($NumericValue, $Unit)
+        $ConversionArr = [Metric]::GetConvertableUnitsArr($NumericValue, $Uom, $SiConversion)
         if ($ConversionArr) {
             $ConvertVal = ($ConversionArr | Where-Object {
                     $_.UnitPrefix -eq $ConvertUnit
                 }).Value
         }
         else {
-            throw[InvalidMetricThreshold]
+            throw [InvalidMetricThreshold]::new("Error make sure the '$Uom' is correct")
         }
         return $NumericValue * $ConvertVal
     }
@@ -209,7 +206,7 @@ class Metric {
         if ($Val.Substring($Val.length - 1) -Match '\d') {
             return $Val
         }
-        return $this.ConvertThreshold($Val)
+        return [Metric]::ConvertThreshold($Val, $this.UOM, $this.SiBytesConversion)
     }
 
     [HashTable] ParseThreshold($Threshold) {
@@ -241,8 +238,8 @@ class Metric {
                 $Return.end = $this.ParseThresholdLimit($end, $false)
             }
         }
-        catch {
-            throw [InvalidMetricThreshold] ("Invalid Threshold Syntax '$Threshold'")
+        catch [InvalidMetricThreshold] {
+            throw [InvalidMetricThreshold]::new("Invalid Threshold Syntax '$Threshold'. $($_.Exception.ErrorMessage)")
         }
         return $Return
     }
@@ -259,25 +256,32 @@ class Metric {
         return !$isOutsideRange
     }
 
+    [hashtable] static ConvertValue($Value, $Unit, $SummaryPrecision, $SiConversion) {
+        $convertableUnitsArr = [Metric]::GetConvertableUnitsArr($Value, $Unit, $SiConversion)
+        $convertedMetric = [Metric]::ConvertValueMethod($Value, $Unit, $convertableUnitsArr, $summaryPrecision)
+        return $convertedMetric
+    }
+
     [void] CreateMetricSummary() {
         # Creates the summary data output string for the Check"""
-        $ConvertedValue = $this.Value
+        [hashtable] $convertedMetric = @{}
+        $convertedMetric.Value = $this.Value
+        $convertedMetric.UOM = $this.UOM
         if ($this.ConvertMetric) {
-            $ConvertableUnitsArr = $this.GetConvertableUnitsArr($this.Value, $this.UOM)
-            $ConvertedValue = $this.ConvertValue($this.Value, $ConvertableUnitsArr, $this.SummaryPrecision)
+            $convertedMetric = [Metric]::ConvertValue($this.Value, $this.UOM, $this.SummaryPrecision, $this.SiBytesConversion)
         }
-        $DisplayUOM = $this.UOMprefix + $this.UOM
+        $displayUOM = $convertedMetric.UOM
         if ($this.DisplayInSummary) {
             $this.DisplayFormat = $this.DisplayFormat -Replace ('{name}', $this.DisplayName)
             $this.DisplayFormat = $this.DisplayFormat -Replace ('{unit}', $DisplayUOM)
-            $this.DisplayFormat = $this.DisplayFormat -Replace ('{value}', $ConvertedValue)
+            $this.DisplayFormat = $this.DisplayFormat -Replace ('{value}', $convertedMetric.Value)
             $this.Summary = $this.DisplayFormat
         }
     }
 
     [void] CreateMetricPerfOutput() {
         # Creates the performance data output string for the Check"""
-        $MetricValue = [math]::Round($this.Value, $this.PerfDataPrecision)
+        $MetricValue = [Math]::Round($this.Value, $this.PerfDataPrecision)
         $MetricName = $( if ( $this.Name.Contains(' ')) { "'{0}'" -f $this.Name } else { $this.Name } )
         $HasThresholds = $this.WarningThreshold -Or $this.CriticalThreshold
         $this.PerfOutput = "{0}={1}{2}{3}{4}{5}{6} " -f $MetricName, $MetricValue, $this.UOM,

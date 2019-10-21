@@ -183,7 +183,7 @@ Describe 'CheckExitCodes'{
         $out = {
             $MetricC = [Metric]::New(@{Name = 'Metric'; Value = 10000; WarningThreshold = '1Kdd'})
         } | Should -Throw -PassThru
-        $out.Exception.ErrorMessage | Should -Be "Invalid Threshold Syntax '1Kdd'"
+        $out.Exception.ErrorMessage | Should -Be "Invalid Threshold Syntax '1Kdd'. Unit '' doesn't match 'dd'"
     }
 }
 
@@ -347,7 +347,6 @@ Describe 'CheckPrecision'{
         $Check.addMetricObj($metricA)
         $Expected = "METRIC OK - Disk Usage is 30.554% | disk_usage=30.5543%;50;60 "
         (Get-Final($Check)  | Should -Be $Expected)
-
     }
 }
 
@@ -387,6 +386,22 @@ Describe 'CheckCompleteOutputWhenNotConverting'{
     }
 }
 
+Describe 'Check Static methods'{
+    $value = 10000
+    $unit = 'b'
+    $precision = 2
+    $siBytesConversion = $false
+    it 'Should convert the value without an object'{
+        $converted = [Metric]::ConvertValue($value, $unit, $precision, $siBytesConversion)
+        $converted.value | should -be 9.77
+        $converted.UOM | Should -Be 'Kb'
+    }
+
+    it 'Should convert the threshold'{
+        $converted = [Metric]::ConvertThreshold('10MB','B',$false)
+        $converted | Should -Be 10485760
+    }
+}
 
 
 
