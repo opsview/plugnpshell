@@ -6,7 +6,7 @@
 * **category**    Libraries
 * **copyright**   Copyright (C) 2003 - 2019 Opsview Limited. All rights reserved
 * **license**     Apache License Version 2.0 (see [LICENSE](LICENSE))
-* **link**        https://github.com/opsview/powershell
+* **link**        https://github.com/opsview/plugnpshell
 
 
 ## Installing the Library
