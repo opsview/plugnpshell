@@ -13,7 +13,7 @@
 
 For Opsview versions above 6.3. **PlugNpshell** is preinstalled.
 
-For Opsview versions 6.2, Opsview Powershell needs to be used to install the library.
+For Opsview versions 6.2 and below, Opsview Powershell needs to be used to install the library.
 Install the PlugNpshell library by adding the module to the following directory
 
 ```
