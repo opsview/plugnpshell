@@ -19,7 +19,7 @@ class AssumedOK: System.Exception {
     # To be thrown when the status of the check cannot be identified.
     # This is usually used when the check requires the result of a previous run and this is the first run.
     [string] $ErrorMessage
-    ResultError([string]$Message) {
+    AssumedOK([string]$Message) {
         $this.ErrorMessage = $Message
     }
 }

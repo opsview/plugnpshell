@@ -271,9 +271,12 @@ class Metric {
             $convertedMetric = [Metric]::ConvertValue($this.Value, $this.UOM, $this.SummaryPrecision, $this.SiBytesConversion)
         }
         $displayUOM = $convertedMetric.UOM
+        if ( $displayUOM -eq 'per_second') {
+            $displayUOM = '/s'
+        }
         if ($this.DisplayInSummary) {
             $this.DisplayFormat = $this.DisplayFormat -Replace ('{name}', $this.DisplayName)
-            $this.DisplayFormat = $this.DisplayFormat -Replace ('{unit}', $DisplayUOM)
+            $this.DisplayFormat = $this.DisplayFormat -Replace ('{unit}', $displayUOM)
             $this.DisplayFormat = $this.DisplayFormat -Replace ('{value}', $convertedMetric.Value)
             $this.Summary = $this.DisplayFormat
         }
