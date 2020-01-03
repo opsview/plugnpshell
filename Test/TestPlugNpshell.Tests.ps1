@@ -62,12 +62,12 @@ Describe 'CheckMetricException'{
 }
 Describe 'CheckExceptions'{
     It 'should match the exception Assumed OK'{
-            $out = { throw [AssumedOK]"Error"} | Should -Throw -PassThru
-            $out.Exception | Should -Match "AssumedOK"
+            $out = { throw [AssumedOK]::new('Error')} | Should -Throw -PassThru
+            $out.Exception.ErrorMessage | Should -Be "Error"
     }
 
     It 'should match the exception ResultError'{
-        $out = { throw [ResultError]"Error"} | Should -Throw -PassThru
+        $out = { throw [ResultError]::New("Error") } | Should -Throw -PassThru
             $out.Exception | Should -Match "ResultError"
     }
 }
@@ -400,6 +400,18 @@ Describe 'Check Static methods'{
     it 'Should convert the threshold'{
         $converted = [Metric]::ConvertThreshold('10MB','B',$false)
         $converted | Should -Be 10485760
+    }
+}
+
+Describe 'Check /s handling'{
+    $Check = [Check]@{Name = "Check"; Sep =" ++ "}
+    $MetricA = [Metric]::New(@{Name = "outbound_obj"; Value = 2; UOM = 'per_second'; WarningThreshold = '50'; CriticalThreshold = '60';
+                             DisplayName = "Outbound Objects";})
+    It 'Should the expected output for per_second'{
+        $Check.addMetricObj(@($metricA,$metricB))
+        $Expected = "METRIC OK - Outbound Objects is 2/s | outbound_obj=2per_second;50;60 "
+        (Get-Final($check) | Should -Be $Expected)
+
     }
 }
 
