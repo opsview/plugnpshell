@@ -29,6 +29,7 @@ CURRENTDIR=$(dir $(realpath $(firstword $(MAKEFILE_LIST))))
 SCRIPTS_DIR = $(CURRENTDIR)PlugNpshell/
 TEST_DIR=$(CURRENTDIR)Test
 POWERSHELL_BIN=sudo /opt/opsview/powershell/pwsh
+POWERSHELL_SCRIPT_ANALYZER_VERSION=1.18.3
 
 # --- MAKE TARGETS ---
 
@@ -54,7 +55,7 @@ test: test-plugins
 
 .PHONY: script-analyzer-plugins
 script-analyzer-plugins:
-	-${POWERSHELL_BIN} -Command Import-Module PSScriptAnalyzer -Force
+	-${POWERSHELL_BIN} -Command Import-Module PSScriptAnalyzer -RequiredVersion ${POWERSHELL_SCRIPT_ANALYZER_VERSION} -Force
 	@for f in ${SCRIPTS_DIR}/*.ps1; do \
 	    ${POWERSHELL_BIN} -Command Invoke-ScriptAnalyzer "$${f}"; done
 
