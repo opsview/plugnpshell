@@ -1,13 +1,13 @@
 # MAKEFILE
 #
-# @link https://secure.opsview.com/gerrit/#/admin/projects/plugin-lib-powershell
+# @link http://gerrit-ovh.opsview.com/#/admin/projects/plugin-lib-powershell
 # ------------------------------------------------------------------------------
 
 # Use bash as shell
 SHELL=/bin/bash
 
 # CVS path (path to the parent dir containing the project)
-CVSPATH=https://secure.opsview.com/gerrit/#/admin/projects/
+CVSPATH=http://gerrit-ovh.opsview.com/#/admin/projects/
 
 # Project owner
 OWNER=opsview
