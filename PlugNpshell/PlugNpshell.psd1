@@ -13,7 +13,7 @@ Author = 'Opsview'
 CompanyName = 'Opsview'
 
 # Copyright statement for this module
-Copyright = 'Copyright (C) 2003 - 2019 Opsview Limited. All rights reserved'
+Copyright = 'Copyright (C) 2003 - 2023 Opsview Limited. All rights reserved'
 
 # Description of the functionality provided by this module
 Description = 'A Simple Powershell Library for creating Opsview Opspack plugins'
