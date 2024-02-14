@@ -7,13 +7,13 @@ ModuleVersion = '1.0'
 GUID = '710a4e57-db59-4c53-af03-a1e67a88ce8b'
 
 # Author of this module
-Author = 'Opsview'
+Author = 'ITRS Group Ltd'
 
 # Company or vendor of this module
-CompanyName = 'Opsview'
+CompanyName = 'ITRS Group Ltd'
 
 # Copyright statement for this module
-Copyright = 'Copyright (C) 2003 - 2024 Opsview Limited. All rights reserved'
+Copyright = 'Copyright (C) 2003 - 2024 ITRS Group Ltd. All rights reserved'
 
 # Description of the functionality provided by this module
 Description = 'A Simple Powershell Library for creating Opsview Opspack plugins'
