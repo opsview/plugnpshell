@@ -7,10 +7,10 @@ ModuleVersion = '1.0'
 GUID = '710a4e57-db59-4c53-af03-a1e67a88ce8b'
 
 # Author of this module
-Author = 'ITRS Group Ltd'
+Author = 'Opsview'
 
 # Company or vendor of this module
-CompanyName = 'ITRS Group Ltd'
+CompanyName = 'Opsview'
 
 # Copyright statement for this module
 Copyright = 'Copyright (C) 2003 - 2024 ITRS Group Ltd. All rights reserved'
