@@ -10,10 +10,10 @@ SHELL=/bin/bash
 CVSPATH=https://secure.opsview.com/gerrit/#/admin/projects/
 
 # Project owner
-OWNER=opsview
+OWNER=ITRS Group Ltd
 
 # Project vendor
-VENDOR=opsview
+VENDOR=ITRS Group Ltd
 
 # Project name
 PROJECT=plugin-lib-powershell
