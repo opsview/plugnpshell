@@ -1,19 +1,8 @@
-# MAKEFILE
-#
-# @link https://secure.opsview.com/gerrit/#/admin/projects/plugin-lib-powershell
-# ------------------------------------------------------------------------------
+# Makefile for plugin-lib-powershell
+# Copyright (C) 2003-2025 ITRS Group Ltd. All rights reserved
 
 # Use bash as shell
 SHELL=/bin/bash
-
-# CVS path (path to the parent dir containing the project)
-CVSPATH=https://secure.opsview.com/gerrit/#/admin/projects/
-
-# Project owner
-OWNER=ITRS Group Ltd
-
-# Project vendor
-VENDOR=ITRS Group Ltd
 
 # Project name
 PROJECT=plugin-lib-powershell
