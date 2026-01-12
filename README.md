@@ -4,7 +4,7 @@
 *A Simple Powershell Library for creating [Opsview Opspack plugins](https://github.com/opsview/Opsview-Integrations/blob/master/WHAT_IS_A_MONITORING_PLUGIN.md).*
 
 * **category**    Libraries
-* **copyright**   Copyright (C) 2003-2025 ITRS Group Ltd. All rights reserved
+* **copyright**   Copyright (C) 2003-2026 ITRS Group Ltd. All rights reserved
 * **license**     Apache License Version 2.0 (see [LICENSE](LICENSE))
 * **link**        https://github.com/opsview/plugnpshell
 
@@ -13,7 +13,7 @@
 
 For Opsview versions above 6.3. **PlugNpshell** is preinstalled.
 
-For Opsview versions 6.2 and below, Opsview Powershell needs to be used to install the library.
+For Opsview versions 6.2, Opsview Powershell needs to be used to install the library.
 Install the PlugNpshell library by adding the module to the following directory
 
 ```

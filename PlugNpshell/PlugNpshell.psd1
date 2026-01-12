@@ -13,7 +13,7 @@ Author = 'ITRS Group Ltd'
 CompanyName = 'ITRS Group Ltd'
 
 # Copyright statement for this module
-Copyright = 'Copyright (C) 2003-2025 ITRS Group Ltd. All rights reserved'
+Copyright = 'Copyright (C) 2003-2026 ITRS Group Ltd. All rights reserved'
 
 # Description of the functionality provided by this module
 Description = 'A Simple Powershell Library for creating Opsview Opspack plugins'

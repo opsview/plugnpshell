@@ -1,5 +1,5 @@
 # Makefile for plugin-lib-powershell
-# Copyright (C) 2003-2025 ITRS Group Ltd. All rights reserved
+# Copyright (C) 2003-2026 ITRS Group Ltd. All rights reserved
 
 # Use bash as shell
 SHELL=/bin/bash
@@ -18,6 +18,8 @@ CURRENTDIR=$(dir $(realpath $(firstword $(MAKEFILE_LIST))))
 SCRIPTS_DIR = $(CURRENTDIR)PlugNpshell/
 TEST_DIR=$(CURRENTDIR)Test
 POWERSHELL_BIN=sudo /opt/opsview/powershell/pwsh
+POWERSHELL_SCRIPT_ANALYZER_VERSION=1.18.3
+POWERSHELL_PESTER_VERSION=4.9.0
 
 # --- MAKE TARGETS ---
 
@@ -34,16 +36,16 @@ all: help
 
 .PHONY: test-plugins
 test-plugins:
-	-${POWERSHELL_BIN} -Command Import-Module Pester -Force
+	-${POWERSHELL_BIN} -Command Import-Module Pester -RequiredVersion ${POWERSHELL_PESTER_VERSION} -Force
 	@for f in ${SCRIPTS_DIR}/*.ps1; do \
-	    ${POWERSHELL_BIN} -Command Invoke-Pester $(TEST_DIR)/TestPlugNpshell.Tests.ps1 -CodeCoverage "$${f}"; done
+	    ${POWERSHELL_BIN} -Command Invoke-Pester $(TEST_DIR)/*.Tests.ps1 -CodeCoverage "$${f}"; done
 
 .PHONY: test
 test: test-plugins
 
 .PHONY: script-analyzer-plugins
 script-analyzer-plugins:
-	-${POWERSHELL_BIN} -Command Import-Module PSScriptAnalyzer -Force
+	-${POWERSHELL_BIN} -Command Import-Module PSScriptAnalyzer -RequiredVersion ${POWERSHELL_SCRIPT_ANALYZER_VERSION} -Force
 	@for f in ${SCRIPTS_DIR}/*.ps1; do \
 	    ${POWERSHELL_BIN} -Command Invoke-ScriptAnalyzer "$${f}"; done
 
